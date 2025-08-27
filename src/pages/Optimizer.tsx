@@ -56,7 +56,7 @@ const Optimizer: React.FC = () => {
     selectedProject.cuts.length > 0;
 
   return (
-    <div className="space-y-6 pb-20 md:pb-0">
+    <div className="pb-20 space-y-6 md:pb-0">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -68,8 +68,8 @@ const Optimizer: React.FC = () => {
       </div>
 
       {/* Project Selection */}
-      <div className="card p-6">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+      <div className="p-6 card">
+        <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
           Select Project
         </h3>
         {projects.length > 0 ? (
@@ -86,7 +86,12 @@ const Optimizer: React.FC = () => {
               <option value="">Choose a project...</option>
               {projects.map((project) => (
                 <option key={project.id} value={project.id}>
-                  {project.name} ({project.planks.length} planks,{" "}
+                  {project.name} (
+                  {project.planks.reduce(
+                    (sum, plank) => sum + plank.quantity,
+                    0
+                  )}{" "}
+                  planks,{" "}
                   {project.cuts.reduce((sum, cut) => sum + cut.quantity, 0)}{" "}
                   cuts)
                 </option>
@@ -94,15 +99,19 @@ const Optimizer: React.FC = () => {
             </select>
 
             {selectedProject && (
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                <h4 className="mb-2 font-medium text-gray-900 dark:text-gray-100">
                   {selectedProject.name}
                 </h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center">
                     <Package className="w-4 h-4 mr-2 text-gray-500" />
                     <span>
-                      {selectedProject.planks.length} planks available
+                      {selectedProject.planks.reduce(
+                        (sum, plank) => sum + plank.quantity,
+                        0
+                      )}{" "}
+                      planks available
                     </span>
                   </div>
                   <div className="flex items-center">
@@ -120,12 +129,12 @@ const Optimizer: React.FC = () => {
             )}
           </div>
         ) : (
-          <div className="text-center py-8">
-            <Package className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+          <div className="py-8 text-center">
+            <Package className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+            <h4 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
               No projects found
             </h4>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <p className="mb-4 text-gray-600 dark:text-gray-400">
               Create a project first to run optimization
             </p>
             <button onClick={() => navigate("/")} className="btn-primary">
@@ -137,8 +146,8 @@ const Optimizer: React.FC = () => {
 
       {/* Optimization Controls */}
       {selectedProject && (
-        <div className="card p-6">
-          <div className="flex justify-between items-center">
+        <div className="p-6 card">
+          <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 Run Optimization
@@ -150,7 +159,7 @@ const Optimizer: React.FC = () => {
             <button
               onClick={runOptimization}
               disabled={!canOptimize || isOptimizing}
-              className="btn-primary flex items-center"
+              className="flex items-center btn-primary"
             >
               <Play className="w-4 h-4 mr-2" />
               {isOptimizing ? "Optimizing..." : "Optimize"}
@@ -158,9 +167,9 @@ const Optimizer: React.FC = () => {
           </div>
 
           {!canOptimize && selectedProject && (
-            <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <div className="p-4 mt-4 border border-yellow-200 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800">
               <div className="flex items-center">
-                <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mr-2" />
+                <AlertTriangle className="w-5 h-5 mr-2 text-yellow-600 dark:text-yellow-400" />
                 <span className="text-sm text-yellow-800 dark:text-yellow-200">
                   Project needs at least one plank and one cut to optimize
                 </span>
@@ -174,10 +183,10 @@ const Optimizer: React.FC = () => {
       {result && (
         <div className="space-y-6">
           {/* Statistics */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="card p-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div className="p-4 card">
               <div className="flex items-center">
-                <BarChart3 className="w-8 h-8 text-wood-600 dark:text-wood-400 mr-3" />
+                <BarChart3 className="w-8 h-8 mr-3 text-wood-600 dark:text-wood-400" />
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Efficiency
@@ -189,9 +198,9 @@ const Optimizer: React.FC = () => {
               </div>
             </div>
 
-            <div className="card p-4">
+            <div className="p-4 card">
               <div className="flex items-center">
-                <Package className="w-8 h-8 text-blue-600 dark:text-blue-400 mr-3" />
+                <Package className="w-8 h-8 mr-3 text-blue-600 dark:text-blue-400" />
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Planks Used
@@ -203,9 +212,9 @@ const Optimizer: React.FC = () => {
               </div>
             </div>
 
-            <div className="card p-4">
+            <div className="p-4 card">
               <div className="flex items-center">
-                <Scissors className="w-8 h-8 text-green-600 dark:text-green-400 mr-3" />
+                <Scissors className="w-8 h-8 mr-3 text-green-600 dark:text-green-400" />
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Cuts Placed
@@ -220,9 +229,9 @@ const Optimizer: React.FC = () => {
               </div>
             </div>
 
-            <div className="card p-4">
+            <div className="p-4 card">
               <div className="flex items-center">
-                <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400 mr-3" />
+                <AlertTriangle className="w-8 h-8 mr-3 text-red-600 dark:text-red-400" />
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Total Waste
@@ -238,14 +247,14 @@ const Optimizer: React.FC = () => {
 
           {/* Unplaced Cuts Warning */}
           {result.unplacedCuts.length > 0 && (
-            <div className="card p-4 border-l-4 border-red-500">
+            <div className="p-4 border-l-4 border-red-500 card">
               <div className="flex items-center mb-2">
-                <AlertTriangle className="w-5 h-5 text-red-600 mr-2" />
+                <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
                 <h4 className="font-medium text-red-800 dark:text-red-200">
                   Unplaced Cuts ({result.unplacedCuts.length})
                 </h4>
               </div>
-              <p className="text-sm text-red-700 dark:text-red-300 mb-2">
+              <p className="mb-2 text-sm text-red-700 dark:text-red-300">
                 The following cuts could not be placed on available planks:
               </p>
               <div className="space-y-1">
@@ -266,17 +275,17 @@ const Optimizer: React.FC = () => {
           <OptimizationVisualization result={result} unit={settings.unit} />
 
           {/* Detailed Results */}
-          <div className="card p-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+          <div className="p-6 card">
+            <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
               Detailed Cutting Plan
             </h3>
             <div className="space-y-6">
               {result.optimizedPlanks.map((optimizedPlank, index) => (
                 <div
                   key={index}
-                  className="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+                  className="p-4 border border-gray-200 rounded-lg dark:border-gray-600"
                 >
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center justify-between mb-3">
                     <h4 className="font-medium text-gray-900 dark:text-gray-100">
                       Plank {index + 1} - {optimizedPlank.plank.material}
                     </h4>
@@ -293,7 +302,7 @@ const Optimizer: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
                     Dimensions: {optimizedPlank.plank.length} ×{" "}
                     {optimizedPlank.plank.width} ×{" "}
                     {optimizedPlank.plank.thickness} {settings.unit}
@@ -307,14 +316,14 @@ const Optimizer: React.FC = () => {
                       {optimizedPlank.placements.map((placement, cutIndex) => (
                         <div
                           key={cutIndex}
-                          className="flex justify-between items-center text-sm bg-gray-50 dark:bg-gray-700 p-2 rounded"
+                          className="flex items-center justify-between p-2 text-sm rounded bg-gray-50 dark:bg-gray-700"
                         >
                           <span>
                             {placement.cut.label || `Cut ${cutIndex + 1}`}:{" "}
                             {placement.cut.length} × {placement.cut.width} ×{" "}
                             {placement.cut.thickness} {settings.unit}
                             {placement.rotated && (
-                              <span className="text-blue-600 dark:text-blue-400 ml-2">
+                              <span className="ml-2 text-blue-600 dark:text-blue-400">
                                 (rotated)
                               </span>
                             )}
@@ -337,8 +346,8 @@ const Optimizer: React.FC = () => {
           </div>
 
           {/* Export Actions */}
-          <div className="card p-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+          <div className="p-6 card">
+            <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
               Export Results
             </h3>
             <div className="flex flex-wrap gap-4">

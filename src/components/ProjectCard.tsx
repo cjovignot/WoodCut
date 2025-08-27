@@ -18,14 +18,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   };
 
   return (
-    <div className="card p-6 hover:shadow-md transition-shadow duration-200">
-      <div className="flex justify-between items-start mb-4">
+    <div className="p-6 transition-shadow duration-200 card hover:shadow-md">
+      <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {project.name}
           </h3>
           {project.description && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
               {project.description}
             </p>
           )}
@@ -33,13 +33,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="flex space-x-2">
           <button
             onClick={() => onEdit(project)}
-            className="p-2 text-gray-400 hover:text-wood-600 dark:hover:text-wood-400 transition-colors"
+            className="p-2 text-gray-400 transition-colors hover:text-wood-600 dark:hover:text-wood-400"
           >
             <Edit className="w-4 h-4" />
           </button>
           <button
             onClick={() => onDelete(project.id)}
-            className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+            className="p-2 text-gray-400 transition-colors hover:text-red-600"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -50,7 +50,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="flex items-center space-x-4">
           <div className="flex items-center">
             <Package className="w-4 h-4 mr-1" />
-            <span>{project.planks.length} planks</span>
+            <span>
+              {project.planks.reduce((sum, plank) => sum + plank.quantity, 0)}{" "}
+              planks
+            </span>
           </div>
           <div className="flex items-center">
             <Scissors className="w-4 h-4 mr-1" />

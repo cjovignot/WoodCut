@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import type { WoodPlank } from "../types";
+import type { WoodPlank, Unit, Project } from "../types";
 import { Plus, X } from "lucide-react";
 
 interface PlankFormProps {
-  planks: WoodPlank[];
-  onPlanksChange: (planks: WoodPlank[]) => void;
-  unit: string;
+  project: Project;
+  onProjectChange: (project: Project) => void;
+  unit: Unit;
 }
 
 const PlankForm: React.FC<PlankFormProps> = ({
-  planks,
-  onPlanksChange,
+  project,
+  onProjectChange,
   unit,
 }) => {
   const [showForm, setShowForm] = useState(false);
@@ -31,10 +31,19 @@ const PlankForm: React.FC<PlankFormProps> = ({
       width: parseFloat(formData.width),
       thickness: parseFloat(formData.thickness),
       material: formData.material,
-      quantity: parseInt(formData.quantity),
+      quantity: parseInt(formData.quantity, 10),
     };
 
-    onPlanksChange([...planks, newPlank]);
+    const updatedProject: Project = {
+      ...project,
+      planks: [...project.planks, newPlank],
+      updatedAt: new Date(),
+    };
+
+    // Met à jour le parent et IndexedDB
+    onProjectChange(updatedProject);
+
+    // Reset form
     setFormData({
       length: "",
       width: "",
@@ -46,29 +55,38 @@ const PlankForm: React.FC<PlankFormProps> = ({
   };
 
   const removePlank = (id: string) => {
-    onPlanksChange(planks.filter((plank) => plank.id !== id));
+    const updatedProject: Project = {
+      ...project,
+      planks: project.planks.filter((plank) => plank.id !== id),
+      updatedAt: new Date(),
+    };
+
+    onProjectChange(updatedProject);
   };
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
           Wood Planks
         </h3>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="btn-primary flex items-center"
+          type="button"
+          className="flex items-center btn-primary"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Plank
         </button>
       </div>
 
+      {/* Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="card p-4 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form onSubmit={handleSubmit} className="p-4 space-y-4 card">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Length ({unit})
               </label>
               <input
@@ -83,7 +101,7 @@ const PlankForm: React.FC<PlankFormProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Width ({unit})
               </label>
               <input
@@ -98,7 +116,7 @@ const PlankForm: React.FC<PlankFormProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Thickness ({unit})
               </label>
               <input
@@ -113,9 +131,10 @@ const PlankForm: React.FC<PlankFormProps> = ({
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Material
               </label>
               <input
@@ -130,7 +149,7 @@ const PlankForm: React.FC<PlankFormProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Quantity
               </label>
               <input
@@ -145,6 +164,7 @@ const PlankForm: React.FC<PlankFormProps> = ({
               />
             </div>
           </div>
+
           <div className="flex justify-end space-x-2">
             <button
               type="button"
@@ -160,12 +180,13 @@ const PlankForm: React.FC<PlankFormProps> = ({
         </form>
       )}
 
-      {planks.length > 0 && (
+      {/* List of planks */}
+      {project.planks.length > 0 && (
         <div className="space-y-2">
-          {planks.map((plank) => (
+          {project.planks.map((plank) => (
             <div
               key={plank.id}
-              className="card p-4 flex justify-between items-center"
+              className="flex items-center justify-between p-4 card"
             >
               <div className="flex-1">
                 <div className="flex items-center space-x-4 text-sm">
@@ -178,7 +199,8 @@ const PlankForm: React.FC<PlankFormProps> = ({
               </div>
               <button
                 onClick={() => removePlank(plank.id)}
-                className="text-red-500 hover:text-red-700 p-1"
+                type="button"
+                className="p-1 text-red-500 hover:text-red-700"
               >
                 <X className="w-4 h-4" />
               </button>

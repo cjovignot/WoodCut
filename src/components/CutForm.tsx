@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import type { RequiredCut } from "../types";
+import type { RequiredCut, Project, Unit } from "../types";
 import { Plus, X } from "lucide-react";
 
 interface CutFormProps {
-  cuts: RequiredCut[];
-  onCutsChange: (cuts: RequiredCut[]) => void;
-  unit: string;
+  project: Project;
+  onProjectChange: (project: Project) => void;
+  unit: Unit;
 }
 
-const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
+const CutForm: React.FC<CutFormProps> = ({
+  project,
+  onProjectChange,
+  unit,
+}) => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     length: "",
@@ -30,7 +34,14 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
       label: formData.label || undefined,
     };
 
-    onCutsChange([...cuts, newCut]);
+    const updatedProject: Project = {
+      ...project,
+      cuts: [...project.cuts, newCut],
+      updatedAt: new Date(),
+    };
+
+    onProjectChange(updatedProject);
+
     setFormData({
       length: "",
       width: "",
@@ -42,14 +53,20 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
   };
 
   const removeCut = (id: string) => {
-    onCutsChange(cuts.filter((cut) => cut.id !== id));
+    const updatedProject: Project = {
+      ...project,
+      cuts: project.cuts.filter((cut) => cut.id !== id),
+      updatedAt: new Date(),
+    };
+
+    onProjectChange(updatedProject);
   };
 
-  const totalCuts = cuts.reduce((sum, cut) => sum + cut.quantity, 0);
+  const totalCuts = project.cuts.reduce((sum, cut) => sum + cut.quantity, 0);
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
           Required Cuts
           {totalCuts > 0 && (
@@ -60,7 +77,7 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
         </h3>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="btn-primary flex items-center"
+          className="flex items-center btn-primary"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Cut
@@ -68,10 +85,10 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="card p-4 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form onSubmit={handleSubmit} className="p-4 space-y-4 card">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Length ({unit})
               </label>
               <input
@@ -86,7 +103,7 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Width ({unit})
               </label>
               <input
@@ -101,7 +118,7 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Thickness ({unit})
               </label>
               <input
@@ -116,9 +133,10 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Quantity
               </label>
               <input
@@ -133,7 +151,7 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Label (optional)
               </label>
               <input
@@ -147,6 +165,7 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
               />
             </div>
           </div>
+
           <div className="flex justify-end space-x-2">
             <button
               type="button"
@@ -162,12 +181,12 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
         </form>
       )}
 
-      {cuts.length > 0 && (
+      {project.cuts.length > 0 && (
         <div className="space-y-2">
-          {cuts.map((cut) => (
+          {project.cuts.map((cut) => (
             <div
               key={cut.id}
-              className="card p-4 flex justify-between items-center"
+              className="flex items-center justify-between p-4 card"
             >
               <div className="flex-1">
                 <div className="flex items-center space-x-4 text-sm">
@@ -182,7 +201,7 @@ const CutForm: React.FC<CutFormProps> = ({ cuts, onCutsChange, unit }) => {
               </div>
               <button
                 onClick={() => removeCut(cut.id)}
-                className="text-red-500 hover:text-red-700 p-1"
+                className="p-1 text-red-500 hover:text-red-700"
               >
                 <X className="w-4 h-4" />
               </button>

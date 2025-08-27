@@ -16,10 +16,10 @@ const ProjectDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Charger le projet
   useEffect(() => {
     const loadProject = async () => {
       if (!id) return;
-
       try {
         const projectData = await getProject(id);
         if (projectData) {
@@ -34,21 +34,15 @@ const ProjectDetail: React.FC = () => {
         setLoading(false);
       }
     };
-
     loadProject();
   }, [id, getProject, navigate]);
 
+  // Sauvegarder le projet
   const handleSave = async () => {
     if (!project) return;
-
     setSaving(true);
     try {
-      await updateProject(project.id, {
-        name: project.name,
-        description: project.description,
-        planks: project.planks,
-        cuts: project.cuts,
-      });
+      await updateProject(project.id, project);
     } catch (error) {
       console.error("Failed to save project:", error);
     } finally {
@@ -56,26 +50,21 @@ const ProjectDetail: React.FC = () => {
     }
   };
 
-  const handleProjectChange = (updates: Partial<Project>) => {
-    if (!project) return;
-    setProject({ ...project, ...updates });
-  };
-
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wood-600"></div>
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-b-2 rounded-full animate-spin border-wood-600"></div>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="card p-8 text-center">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+      <div className="p-8 text-center card">
+        <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
           Project not found
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
+        <p className="mb-4 text-gray-600 dark:text-gray-400">
           The project you're looking for doesn't exist or has been deleted.
         </p>
         <button onClick={() => navigate("/")} className="btn-primary">
@@ -86,7 +75,7 @@ const ProjectDetail: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 pb-20 md:pb-0">
+    <div className="pb-20 space-y-6 md:pb-0">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -110,7 +99,7 @@ const ProjectDetail: React.FC = () => {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="btn-primary flex items-center"
+          className="flex items-center btn-primary"
         >
           <Save className="w-4 h-4 mr-2" />
           {saving ? "Saving..." : "Save"}
@@ -118,31 +107,37 @@ const ProjectDetail: React.FC = () => {
       </div>
 
       {/* Project Details Form */}
-      <div className="card p-6 space-y-4">
+      <div className="p-6 space-y-4 card">
         <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
           Project Details
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
               Project Name
             </label>
             <input
               type="text"
               value={project.name}
-              onChange={(e) => handleProjectChange({ name: e.target.value })}
+              onChange={(e) =>
+                setProject((prev) =>
+                  prev ? { ...prev, name: e.target.value } : prev
+                )
+              }
               className="input-field"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
               Description
             </label>
             <input
               type="text"
               value={project.description || ""}
               onChange={(e) =>
-                handleProjectChange({ description: e.target.value })
+                setProject((prev) =>
+                  prev ? { ...prev, description: e.target.value } : prev
+                )
               }
               className="input-field"
               placeholder="Optional description"
@@ -153,21 +148,27 @@ const ProjectDetail: React.FC = () => {
 
       {/* Planks Section */}
       <PlankForm
-        planks={project.planks}
-        onPlanksChange={(planks) => handleProjectChange({ planks })}
+        project={project}
+        onProjectChange={async (updatedProject) => {
+          setProject(updatedProject);
+          await updateProject(updatedProject.id, updatedProject);
+        }}
         unit={settings.unit}
       />
 
       {/* Cuts Section */}
       <CutForm
-        cuts={project.cuts}
-        onCutsChange={(cuts) => handleProjectChange({ cuts })}
+        project={project}
+        onProjectChange={async (updatedProject) => {
+          setProject(updatedProject);
+          await updateProject(updatedProject.id, updatedProject);
+        }}
         unit={settings.unit}
       />
 
       {/* Quick Actions */}
-      <div className="card p-6">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+      <div className="p-6 card">
+        <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
           Quick Actions
         </h3>
         <div className="flex flex-wrap gap-4">
@@ -186,7 +187,7 @@ const ProjectDetail: React.FC = () => {
           </button>
         </div>
         {(project.planks.length === 0 || project.cuts.length === 0) && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             Add at least one plank and one cut to run optimization
           </p>
         )}
