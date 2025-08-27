@@ -19,6 +19,20 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // Generate colors for cuts
+    const colors = [
+      "#ef4444",
+      "#f97316",
+      "#eab308",
+      "#22c55e",
+      "#06b6d4",
+      "#3b82f6",
+      "#8b5cf6",
+      "#ec4899",
+      "#f43f5e",
+      "#84cc16",
+    ];
+
     // Set canvas size
     const containerWidth = canvas.parentElement?.clientWidth || 800;
     canvas.width = containerWidth;
@@ -80,20 +94,6 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
         x + plankWidth - 120,
         y - 5
       );
-
-      // Generate colors for cuts
-      const colors = [
-        "#ef4444",
-        "#f97316",
-        "#eab308",
-        "#22c55e",
-        "#06b6d4",
-        "#3b82f6",
-        "#8b5cf6",
-        "#ec4899",
-        "#f43f5e",
-        "#84cc16",
-      ];
 
       // Draw cuts
       optimizedPlank.placements.forEach((placement, cutIndex) => {
@@ -177,7 +177,7 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
 
   if (result.optimizedPlanks.length === 0) {
     return (
-      <div className="card p-8 text-center">
+      <div className="p-8 text-center card">
         <p className="text-gray-500 dark:text-gray-400">
           No optimization results to display. Run the optimizer first.
         </p>
@@ -186,14 +186,14 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
   }
 
   return (
-    <div className="card p-4">
-      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+    <div className="p-4 card">
+      <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
         Cutting Diagram
       </h3>
       <div className="overflow-x-auto">
         <canvas
           ref={canvasRef}
-          className="border border-gray-200 dark:border-gray-600 rounded"
+          className="border border-gray-200 rounded dark:border-gray-600"
           style={{ maxWidth: "100%", height: "auto" }}
         />
       </div>

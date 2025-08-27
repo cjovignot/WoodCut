@@ -162,7 +162,10 @@ export class WoodCutOptimizer {
     length: number,
     width: number
   ): { x: number; y: number } | null {
-    const { plank, placements } = optimizedPlank;
+    const {
+      // plank,
+      placements,
+    } = optimizedPlank;
 
     // Generate candidate positions
     const candidates: { x: number; y: number }[] = [{ x: 0, y: 0 }];
