@@ -13,14 +13,14 @@ const Layout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen min-w-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+      <header className="shadow-sm bg-sky-900 dark:bg-gray-800">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
+            <div className="flex">
               <div className="flex-shrink-0">
-                <h1 className="text-xl font-bold text-wood-600 dark:text-wood-400">
+                <h1 className="font-[Roboto] !text-2xl font-bold text-white dark:text-wood-400">
                   WoodCut Optimizer
                 </h1>
               </div>
@@ -30,12 +30,12 @@ const Layout: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <main className="px-4 py-8 mx-auto max-w-screen sm:px-6 lg:px-8">
         <Outlet />
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 dark:bg-gray-800 dark:border-gray-700 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-sky-900 dark:bg-gray-800 md:hidden">
         <div className="flex justify-around">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = location.pathname === path;
@@ -45,8 +45,8 @@ const Layout: React.FC = () => {
                 to={path}
                 className={`flex flex-col items-center py-2 px-3 text-xs ${
                   isActive
-                    ? "text-wood-600 dark:text-wood-400"
-                    : "text-gray-500 dark:text-gray-400"
+                    ? "!text-sky-100 dark:text-wood-100"
+                    : "!text-indigo-200 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
                 <Icon className="w-6 h-6 mb-1" />
@@ -59,9 +59,9 @@ const Layout: React.FC = () => {
 
       {/* Desktop Sidebar */}
       <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:flex md:w-64 md:flex-col">
-        <div className="flex flex-col flex-grow pt-5 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-          <div className="flex items-center flex-shrink-0 px-4">
-            <h1 className="text-xl font-bold text-wood-600 dark:text-wood-400">
+        <div className="flex flex-col flex-grow pt-5 bg-sky-900 dark:bg-gray-800">
+          <div className="flex items-center flex-shrink-0 px-3">
+            <h1 className="!text-2xl font-bold text-white dark:text-wood-400">
               WoodCut Optimizer
             </h1>
           </div>
@@ -73,10 +73,10 @@ const Layout: React.FC = () => {
                   <Link
                     key={path}
                     to={path}
-                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                    className={`group hover:!bg-sky-100 hover:!text-sky-900 flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                       isActive
-                        ? "bg-wood-100 dark:bg-wood-900 text-wood-900 dark:text-wood-100"
-                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        ? "!text-sky-100 dark:text-wood-100"
+                        : "!text-indigo-200 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                     }`}
                   >
                     <Icon className="flex-shrink-0 w-6 h-6 mr-3" />
