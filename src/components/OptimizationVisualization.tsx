@@ -101,7 +101,6 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
         x,
         y - 5
       );
-
       // Draw efficiency
       ctx.font = "12px Arial";
       ctx.fillStyle =
@@ -135,6 +134,14 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
         ctx.lineWidth = 1;
         ctx.strokeRect(cutX, cutY, cutDrawWidth, cutDrawHeight);
 
+        const usedLength = Math.max(
+          ...optimizedPlank.placements.map(
+            (p) => p.x + (p.rotated ? p.cut.width : p.cut.length)
+          )
+        );
+
+        const wasteLength = plank.length - usedLength;
+
         // Draw cut label
         if (cutDrawWidth > 40 && cutDrawHeight > 20) {
           ctx.fillStyle = isDarkMode ? "#fff" : "#000";
@@ -149,6 +156,32 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
               cutY + cutDrawHeight / 2 + 3
             );
           }
+        }
+        if (wasteLength > 0) {
+          const wasteX = x + usedLength * scale;
+          const wasteY = y;
+          const wasteWidth = wasteLength * scale;
+          const wasteHeight = plank.width * scale;
+
+          // rectangle "waste"
+          ctx.fillStyle = "#deb887"; // marron clair
+          ctx.fillRect(wasteX, wasteY, wasteWidth, wasteHeight);
+          ctx.strokeStyle = "#8b4513";
+          ctx.strokeRect(wasteX, wasteY, wasteWidth, wasteHeight);
+
+          // texte centré
+          const label = `${wasteLength} ${unit}`;
+          ctx.fillStyle = isDarkMode ? "#fff" : "#000";
+          ctx.font = "12px Arial";
+
+          // largeur du texte en pixels
+          const textWidth = ctx.measureText(label).width;
+
+          // position centrée
+          const textX = wasteX + (wasteWidth - textWidth) / 2;
+          const textY = wasteY + wasteHeight / 2 + 4; // +4 = ajustement vertical
+
+          ctx.fillText(label, textX, textY);
         }
 
         // Draw rotation indicator
@@ -226,12 +259,27 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
       <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
         Cutting Diagram
       </h3>
-      <div className="overflow-x-auto">
+      {/* <div className="overflow-x-auto">
         <canvas
           ref={canvasRef}
           className="border border-gray-200 rounded dark:border-gray-600 min-h-fit"
           style={{ maxWidth: "full", height: "auto" }}
         />
+      </div> */}
+      <div className="overflow-x-auto">
+        <div
+          style={{
+            width: window.innerWidth < 640 ? "800px" : "100%", // <640px = sm breakpoint
+            height: "auto",
+            minWidth: "300px",
+          }}
+        >
+          <canvas
+            ref={canvasRef}
+            className="border border-gray-200 rounded dark:border-gray-600 min-w-[600px] w-[100%] h-auto"
+            // style={{ width: "100%", height: "auto", minWidth: "600px" }} // minWidth pour mobiles
+          />
+        </div>
       </div>
       <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
         <p>• Each colored rectangle represents a cut piece</p>

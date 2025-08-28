@@ -352,7 +352,7 @@ const Optimizer: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="flex-col items-start mb-3 text-xs text-gray-600 dark:text-gray-400">
+                  <div className="grid grid-cols-3 gap-2 mb-3 text-xs text-gray-600 dark:text-gray-400">
                     <p>
                       <span className="font-bold">L: </span>
                       {optimizedPlank.plank.length} {settings?.unit}
