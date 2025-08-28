@@ -62,6 +62,7 @@ const Export: React.FC = () => {
         description: importedProject.description,
         planks: importedProject.planks,
         cuts: importedProject.cuts,
+        isFavorite: false,
       });
 
       navigate(`/project/${newProject.id}`);
@@ -76,7 +77,7 @@ const Export: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-20 md:pb-0">
+    <div className="pb-20 space-y-6 md:pb-0">
       {/* Header */}
       <div className="flex items-center space-x-4">
         <button
@@ -85,8 +86,9 @@ const Export: React.FC = () => {
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <div className="">
+          {" "}
+          <h1 className="!text-3xl font-bold text-sky-900 dark:text-gray-100">
             Export & Import
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
@@ -97,117 +99,120 @@ const Export: React.FC = () => {
       </div>
 
       {/* Project Selection */}
-      <div className="card p-6">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-          Select Project to Export
-        </h3>
-        {projects.length > 0 ? (
-          <select
-            value={selectedProject?.id || ""}
-            onChange={(e) => {
-              const project = projects.find((p) => p.id === e.target.value);
-              setSelectedProject(project || null);
-            }}
-            className="input-field"
-          >
-            <option value="">Choose a project...</option>
-            {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <div className="text-center py-8">
-            <FileText className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-              No projects to export
-            </h4>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Create a project first to export data
-            </p>
-            <button onClick={() => navigate("/")} className="btn-primary">
-              Create Project
-            </button>
+      <div className="p-0 card">
+        <div className="pb-4 mb-2">
+          <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+            Select Project to Export
+          </h3>
+          {projects.length > 0 ? (
+            <select
+              value={selectedProject?.id || ""}
+              onChange={(e) => {
+                const project = projects.find((p) => p.id === e.target.value);
+                setSelectedProject(project || null);
+              }}
+              className="w-full text-sm input-field"
+            >
+              <option value="">Choose a project...</option>
+              {projects.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.name}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <div className="py-8 text-center">
+              <FileText className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              <h4 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+                No projects to export
+              </h4>
+              <p className="mb-4 text-gray-600 dark:text-gray-400">
+                Create a project first to export data
+              </p>
+              <button onClick={() => navigate("/")} className="btn-primary">
+                Create Project
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Export Options */}
+        {selectedProject && (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* Project Data Export */}
+            <div className="p-6 card bg-sky-100/70 rounded-xl">
+              <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
+                Export Project Data
+              </h3>
+              <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                Export your project data to share with others or backup your
+                work
+              </p>
+              <div className="space-y-3">
+                <button
+                  onClick={handleExportJSON}
+                  className="flex items-center justify-center w-full btn-primary"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export as JSON
+                </button>
+                <button
+                  onClick={handleExportCSV}
+                  className="flex items-center justify-center w-full btn-secondary"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export as CSV
+                </button>
+              </div>
+              <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                <p>• JSON: Complete project data with all settings</p>
+                <p>• CSV: Spreadsheet format for planks and cuts</p>
+              </div>
+            </div>
+
+            {/* Optimization Results Export */}
+            <div className="p-6 card bg-sky-100/70 rounded-xl">
+              <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
+                Export Optimization Results
+              </h3>
+              <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                Export cutting plans and diagrams for workshop use
+              </p>
+              <div className="space-y-3">
+                <button
+                  onClick={handleExportPDF}
+                  disabled={!result}
+                  className="flex items-center justify-center w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Export PDF Report
+                </button>
+              </div>
+              {!result && (
+                <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                  Run optimization first to export cutting diagrams
+                </div>
+              )}
+              {result && (
+                <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                  PDF includes cutting instructions, diagrams, and statistics
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
 
-      {/* Export Options */}
-      {selectedProject && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Project Data Export */}
-          <div className="card p-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-              Export Project Data
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Export your project data to share with others or backup your work
-            </p>
-            <div className="space-y-3">
-              <button
-                onClick={handleExportJSON}
-                className="w-full btn-primary flex items-center justify-center"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export as JSON
-              </button>
-              <button
-                onClick={handleExportCSV}
-                className="w-full btn-secondary flex items-center justify-center"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export as CSV
-              </button>
-            </div>
-            <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-              <p>• JSON: Complete project data with all settings</p>
-              <p>• CSV: Spreadsheet format for planks and cuts</p>
-            </div>
-          </div>
-
-          {/* Optimization Results Export */}
-          <div className="card p-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-              Export Optimization Results
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Export cutting plans and diagrams for workshop use
-            </p>
-            <div className="space-y-3">
-              <button
-                onClick={handleExportPDF}
-                disabled={!result}
-                className="w-full btn-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Export PDF Report
-              </button>
-            </div>
-            {!result && (
-              <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-                Run optimization first to export cutting diagrams
-              </div>
-            )}
-            {result && (
-              <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-                PDF includes cutting instructions, diagrams, and statistics
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Import Section */}
-      <div className="card p-6">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+      <div className="p-6 card bg-sky-100/70 rounded-xl">
+        <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
           Import Project
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
           Import a project from a JSON file exported from WoodCut Optimizer
         </p>
         <div className="flex items-center space-x-4">
-          <label className="btn-secondary flex items-center cursor-pointer">
+          <label className="flex items-center cursor-pointer btn-secondary">
             <Upload className="w-4 h-4 mr-2" />
             {importing ? "Importing..." : "Choose JSON File"}
             <input
@@ -225,8 +230,8 @@ const Export: React.FC = () => {
       </div>
 
       {/* Export Tips */}
-      <div className="card p-6 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-        <h3 className="text-lg font-medium text-blue-900 dark:text-blue-100 mb-4">
+      <div className="p-6 border-blue-200 card bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800">
+        <h3 className="mb-4 text-lg font-medium text-blue-900 dark:text-blue-100">
           Export Tips
         </h3>
         <div className="space-y-2 text-sm text-blue-800 dark:text-blue-200">

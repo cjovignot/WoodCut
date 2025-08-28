@@ -6,7 +6,14 @@ import ProjectCard from "../components/ProjectCard";
 
 const Projects: React.FC = () => {
   const navigate = useNavigate();
-  const { projects, loading, createProject, deleteProject } = useProjects();
+  const {
+    projects,
+    updateProject,
+    setProjects,
+    loading,
+    createProject,
+    deleteProject,
+  } = useProjects();
   const [searchTerm, setSearchTerm] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,6 +37,7 @@ const Projects: React.FC = () => {
       description: formData.description,
       planks: [],
       cuts: [],
+      isFavorite: false,
     });
 
     setFormData({ name: "", description: "" });
@@ -45,6 +53,18 @@ const Projects: React.FC = () => {
     if (window.confirm("Are you sure you want to delete this project?")) {
       await deleteProject(id);
     }
+  };
+  const toggleFavorite = async (id: string) => {
+    const project = projects.find((p) => p.id === id);
+    if (!project) return;
+
+    const updated = {
+      ...project,
+      isFavorite: !project.isFavorite,
+      updatedAt: new Date(),
+    };
+
+    await updateProject(project.id, updated);
   };
 
   if (loading) {
@@ -78,13 +98,13 @@ const Projects: React.FC = () => {
 
       {/* Search */}
       <div className="relative w-full">
-        <Search className="absolute w-[--webkit-fill-available] h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+        <Search className="absolute h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
         <input
           type="text"
           placeholder="Search projects..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 input-field"
+          className="pl-10 input-field w-[-webkit-fill-available] rounded-xl"
         />
       </div>
 
@@ -147,6 +167,7 @@ const Projects: React.FC = () => {
               project={project}
               onEdit={handleEditProject}
               onDelete={handleDeleteProject}
+              onToggleFavorite={toggleFavorite} // 👈 ICI obligatoire
             />
           ))}
         </div>

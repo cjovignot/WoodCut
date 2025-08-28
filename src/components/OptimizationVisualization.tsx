@@ -12,31 +12,41 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const labelColors: Record<string, string> = {};
+  let colorIndex = 0;
+
+  // Generate colors for cuts
+  const colors = [
+    "#ef4444",
+    "#f97316",
+    "#eab308",
+    "#22c55e",
+    "#06b6d4",
+    "#3b82f6",
+    "#8b5cf6",
+    "#ec4899",
+    "#f43f5e",
+    "#84cc16",
+  ];
+
+  // On génère toutes les couleurs à l'avance en fonction des labels
+  result.optimizedPlanks.forEach((plank) => {
+    plank.placements.forEach((placement) => {
+      const label =
+        placement.cut.label || `${placement.cut.length}×${placement.cut.width}`;
+      if (!labelColors[label]) {
+        labelColors[label] = colors[colorIndex % colors.length];
+        colorIndex++;
+      }
+    });
+  });
+
   useEffect(() => {
     if (!canvasRef.current || result.optimizedPlanks.length === 0) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
-    // Generate colors for cuts
-    const colors = [
-      "#ef4444",
-      "#f97316",
-      "#eab308",
-      "#22c55e",
-      "#06b6d4",
-      "#3b82f6",
-      "#8b5cf6",
-      "#ec4899",
-      "#f43f5e",
-      "#84cc16",
-    ];
-
-    // Set canvas size
-    const containerWidth = canvas.parentElement?.clientWidth || 800;
-    canvas.width = containerWidth;
-    canvas.height = Math.max(400, result.optimizedPlanks.length * 200);
 
     // Clear canvas
     ctx.fillStyle = "#f9fafb";
@@ -49,10 +59,19 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
     const maxPlankWidth = Math.max(
       ...result.optimizedPlanks.map((p) => p.plank.width)
     );
-    const scale = Math.min(
-      (containerWidth - 100) / maxPlankLength,
-      150 / maxPlankWidth
-    );
+
+    // Set canvas size
+    const tempContainerWidth = canvas.parentElement?.clientWidth || 800;
+    const containerWidth = tempContainerWidth;
+    canvas.width = containerWidth - 10;
+    canvas.height =
+      result.optimizedPlanks.length === 1
+        ? Math.max(
+            maxPlankLength > maxPlankWidth ? maxPlankWidth : maxPlankLength
+          )
+        : Math.max(maxPlankWidth * 2 * result.optimizedPlanks.length);
+
+    const scale = Math.min((containerWidth - 100) / maxPlankLength);
 
     let yOffset = 20;
 
@@ -74,9 +93,9 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
       ctx.fillStyle = "#000";
       ctx.font = "14px Arial";
       ctx.fillText(
-        `Plank ${index + 1} (${plank.length}×${plank.width}×${
+        `Plank ${index + 1}      L:${plank.length}   l: ${plank.width}   t: ${
           plank.thickness
-        } ${unit})`,
+        })`,
         x,
         y - 5
       );
@@ -89,11 +108,11 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
           : optimizedPlank.efficiency > 50
           ? "#eab308"
           : "#dc2626";
-      ctx.fillText(
-        `Efficiency: ${optimizedPlank.efficiency.toFixed(1)}%`,
-        x + plankWidth - 120,
-        y - 5
-      );
+      // ctx.fillText(
+      //   `Efficiency: ${optimizedPlank.efficiency.toFixed(1)}%`,
+      //   x + plankWidth - 120,
+      //   y - 5
+      // );
 
       // Draw cuts
       optimizedPlank.placements.forEach((placement, cutIndex) => {
@@ -107,9 +126,10 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
         const cutDrawHeight = cutWidth * scale;
 
         // Draw cut
-        ctx.fillStyle = colors[cutIndex % colors.length] + "80"; // Semi-transparent
+        const label = cut.label || `${cut.length}×${cut.width}`;
+        ctx.fillStyle = labelColors[label] + "80"; // semi-transparent
         ctx.fillRect(cutX, cutY, cutDrawWidth, cutDrawHeight);
-        ctx.strokeStyle = colors[cutIndex % colors.length];
+        ctx.strokeStyle = "black";
         ctx.lineWidth = 1;
         ctx.strokeRect(cutX, cutY, cutDrawWidth, cutDrawHeight);
 
@@ -140,11 +160,27 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
       yOffset += plankHeight + 40;
     });
 
+    // Build a unique legend
+    const legendItems: { label: string; color: string }[] = [];
+    const usedLabels = new Set<string>();
+
+    result.optimizedPlanks.forEach((plank) => {
+      plank.placements.forEach((placement) => {
+        const label =
+          placement.cut.label ||
+          `${placement.cut.length}×${placement.cut.width}`;
+        if (!usedLabels.has(label)) {
+          usedLabels.add(label);
+          legendItems.push({
+            label,
+            color: labelColors[label],
+          });
+        }
+      });
+    });
+
     // Draw legend
-    if (
-      result.optimizedPlanks.length > 0 &&
-      result.optimizedPlanks[0].placements.length > 0
-    ) {
+    if (legendItems.length > 0) {
       const legendY = yOffset + 20;
       ctx.fillStyle = "#000";
       ctx.font = "12px Arial";
@@ -153,23 +189,21 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
       let legendX = 50;
       let legendItemY = legendY + 20;
 
-      result.optimizedPlanks[0].placements.forEach((placement, index) => {
-        if (index < 10) {
-          // Limit legend items
-          const color = colors[index % colors.length];
-          ctx.fillStyle = color;
-          ctx.fillRect(legendX, legendItemY - 10, 15, 10);
+      // Tri alphabétique par label
+      legendItems.sort((a, b) => a.label.localeCompare(b.label));
 
-          ctx.fillStyle = "#000";
-          ctx.font = "10px Arial";
-          const label = placement.cut.label || `Cut ${index + 1}`;
-          ctx.fillText(label, legendX + 20, legendItemY - 2);
+      legendItems.forEach((item) => {
+        ctx.fillStyle = item.color + "80"; // même transparence que les rectangles
+        ctx.fillRect(legendX, legendItemY - 10, 15, 10);
 
-          legendX += ctx.measureText(label).width + 40;
-          if (legendX > containerWidth - 100) {
-            legendX = 50;
-            legendItemY += 20;
-          }
+        ctx.fillStyle = "#000";
+        ctx.font = "10px Arial";
+        ctx.fillText(item.label, legendX + 20, legendItemY - 2);
+
+        legendX += ctx.measureText(item.label).width + 40;
+        if (legendX > containerWidth - 100) {
+          legendX = 50;
+          legendItemY += 20;
         }
       });
     }
@@ -186,15 +220,15 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
   }
 
   return (
-    <div className="p-4 card">
+    <div className="p-0 card">
       <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
         Cutting Diagram
       </h3>
       <div className="overflow-x-auto">
         <canvas
           ref={canvasRef}
-          className="border border-gray-200 rounded dark:border-gray-600"
-          style={{ maxWidth: "100%", height: "auto" }}
+          className="border border-gray-200 rounded dark:border-gray-600 min-h-fit"
+          style={{ maxWidth: "full", height: "auto" }}
         />
       </div>
       <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">

@@ -63,6 +63,7 @@ export const useProjects = () => {
     updateProject,
     deleteProject,
     getProject,
+    setProjects,
     refreshProjects: loadProjects,
   };
 };

@@ -1,53 +1,69 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import type { Project } from "../types";
-import { Calendar, Edit, Trash2, Package, Scissors } from "lucide-react";
+import { Calendar, Edit, Trash2, Package, Scissors, Heart } from "lucide-react";
 
 interface ProjectCardProps {
   project: Project;
   onEdit: (project: Project) => void;
   onDelete: (id: string) => void;
+  onToggleFavorite: (id: string) => void; // 🔥 obligatoire maintenant
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
   project,
   onEdit,
   onDelete,
+  onToggleFavorite,
 }) => {
+  const navigate = useNavigate();
+
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString();
   };
 
+  const handleNavigate = () => {
+    navigate("/optimizer", { state: { project } });
+  };
+
+  const toggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation(); // ⛔ évite la navigation
+    onToggleFavorite(project.id);
+  };
+
   return (
-    <div className="p-6 transition-shadow duration-200 card hover:shadow-md">
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {project.name}
-          </h3>
-          {project.description && (
-            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-              {project.description}
-            </p>
-          )}
-        </div>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => onEdit(project)}
-            className="p-2 text-gray-400 transition-colors hover:text-wood-600 dark:hover:text-wood-400"
-          >
-            <Edit className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => onDelete(project.id)}
-            className="p-2 text-gray-400 transition-colors hover:text-red-600"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
+    <div
+      className="relative p-6 transition cursor-pointer hover:bg-sky-100 max-sm:bg-sky-100/50 duration-400 card hover:shadow-md rounded-xl"
+      onClick={handleNavigate}
+    >
+      <div className="flex justify-between">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          {project.name}
+        </h3>
+        {/* ❤️ Bouton Favori */}
+        <div
+          onClick={toggleFavorite}
+          className="p-1 rounded-full top-3 right-3 hover:bg-sky-200"
+        >
+          <Heart
+            className={`w-5 h-5 transition-colors ${
+              project.isFavorite ? "fill-red-500 text-red-500" : "text-gray-400"
+            }`}
+          />
         </div>
       </div>
+      {project.description ? (
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {project.description}
+        </p>
+      ) : (
+        <p className="text-sm italic text-gray-600 dark:text-gray-400">
+          No description
+        </p>
+      )}
 
-      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-        <div className="flex items-center space-x-4">
+      <div className="flex items-start justify-between mt-2 text-sm text-gray-600 dark:text-gray-400">
+        <div className="flex-col items-center space-x-4">
           <div className="flex items-center">
             <Package className="w-4 h-4 mr-1" />
             <span>
@@ -66,6 +82,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           <Calendar className="w-4 h-4 mr-1" />
           <span>{formatDate(project.updatedAt)}</span>
         </div>
+      </div>
+
+      <div className="flex justify-end mt-4 space-x-2">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(project);
+          }}
+          className="p-2 text-gray-400 transition-colors hover:text-wood-600 dark:hover:text-wood-400"
+        >
+          <Edit className="w-4 h-4" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(project.id);
+          }}
+          className="p-2 text-gray-400 transition-colors hover:text-red-600"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );

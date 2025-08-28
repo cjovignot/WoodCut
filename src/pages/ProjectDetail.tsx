@@ -99,7 +99,7 @@ const ProjectDetail: React.FC = () => {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center btn-primary"
+          className="flex items-center btn-primary !bg-green-800 text-white hover:!bg-white hover:!text-green-900 hover:!border-green-900"
         >
           <Save className="w-4 h-4 mr-2" />
           {saving ? "Saving..." : "Save"}

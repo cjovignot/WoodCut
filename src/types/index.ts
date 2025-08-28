@@ -22,6 +22,7 @@ export interface Project {
   description?: string;
   planks: WoodPlank[];
   cuts: RequiredCut[];
+  isFavorite: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +38,8 @@ export interface OptimizedPlank {
   plank: WoodPlank;
   placements: CutPlacement[];
   wasteArea: number;
+  wasteDisplay?: string;
+  wasteLength?: number;
   efficiency: number;
 }
 

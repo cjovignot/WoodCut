@@ -180,32 +180,49 @@ const PlankForm: React.FC<PlankFormProps> = ({
         </form>
       )}
 
-      {/* List of planks */}
+      {/* Table of planks */}
       {project.planks.length > 0 && (
-        <div className="space-y-2">
-          {project.planks.map((plank) => (
-            <div
-              key={plank.id}
-              className="flex items-center justify-between p-4 card"
-            >
-              <div className="flex-1">
-                <div className="flex items-center space-x-4 text-sm">
-                  <span className="font-medium">{plank.material}</span>
-                  <span>
-                    {plank.length} × {plank.width} × {plank.thickness} {unit}
-                  </span>
-                  <span className="text-gray-500">Qty: {plank.quantity}</span>
-                </div>
-              </div>
-              <button
-                onClick={() => removePlank(plank.id)}
-                type="button"
-                className="p-1 text-red-500 hover:text-red-700"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="min-w-full border border-gray-200 rounded-lg">
+            <thead className="text-sm bg-gray-100">
+              <tr>
+                <th className="px-4 py-2 font-medium text-left">Matériau</th>
+
+                <th className="px-4 py-2 font-medium text-left">
+                  Longueur ({unit})
+                </th>
+                <th className="px-4 py-2 font-medium text-left">
+                  Largeur ({unit})
+                </th>
+                <th className="px-4 py-2 font-medium text-left">
+                  Epaisseur ({unit})
+                </th>
+                <th className="px-4 py-2 font-medium text-left">Quantité</th>
+                <th className="px-4 py-2 font-medium text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="text-sm divide-y divide-gray-200">
+              {project.planks.map((plank) => (
+                <tr key={plank.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-2">{plank.material}</td>
+
+                  <td className="px-4 py-2">{plank.length}</td>
+                  <td className="px-4 py-2">{plank.width}</td>
+                  <td className="px-4 py-2">{plank.thickness}</td>
+                  <td className="px-4 py-2">{plank.quantity}</td>
+                  <td className="px-4 py-2 text-center">
+                    <button
+                      onClick={() => removePlank(plank.id)}
+                      type="button"
+                      className="p-1 text-red-500 hover:text-red-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
