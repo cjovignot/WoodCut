@@ -6,14 +6,8 @@ import ProjectCard from "../components/ProjectCard";
 
 const Projects: React.FC = () => {
   const navigate = useNavigate();
-  const {
-    projects,
-    updateProject,
-    setProjects,
-    loading,
-    createProject,
-    deleteProject,
-  } = useProjects();
+  const { projects, updateProject, loading, createProject, deleteProject } =
+    useProjects();
   const [searchTerm, setSearchTerm] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [formData, setFormData] = useState({

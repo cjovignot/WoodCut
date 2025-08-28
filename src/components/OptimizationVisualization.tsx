@@ -115,7 +115,7 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
       // );
 
       // Draw cuts
-      optimizedPlank.placements.forEach((placement, cutIndex) => {
+      optimizedPlank.placements.forEach((placement) => {
         const cut = placement.cut;
         const cutLength = placement.rotated ? cut.width : cut.length;
         const cutWidth = placement.rotated ? cut.length : cut.width;
