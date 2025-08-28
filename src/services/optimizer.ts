@@ -65,7 +65,6 @@ export class WoodCutOptimizer {
         seq,
         cfg.unplacedPenalty
       );
-      let bestSeq = [...seq];
       let bestFit = currFit;
       let bestRes = currRes;
 
@@ -109,7 +108,6 @@ export class WoodCutOptimizer {
 
           if (currFit < bestFit) {
             bestFit = currFit;
-            bestSeq = [...seq];
             bestRes = currRes;
           }
         }
