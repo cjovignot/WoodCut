@@ -37,7 +37,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       onClick={handleNavigate}
     >
       <div className="flex justify-between">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-900/80">
           {project.name}
         </h3>
         {/* ❤️ Bouton Favori */}
@@ -53,16 +53,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         </div>
       </div>
       {project.description ? (
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-gray-600 dark:text-slate-900/80">
           {project.description}
         </p>
       ) : (
-        <p className="text-sm italic text-gray-600 dark:text-gray-400">
+        <p className="text-sm italic text-gray-600 dark:text-slate-900/80">
           No description
         </p>
       )}
 
-      <div className="flex items-start justify-between mt-2 text-sm text-gray-600 dark:text-gray-400">
+      <div className="flex items-start justify-between mt-2 text-sm text-gray-600 dark:text-slate-900/80">
         <div className="flex-col items-center space-x-4">
           <div className="flex items-center">
             <Package className="w-4 h-4 mr-1" />

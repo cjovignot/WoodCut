@@ -106,14 +106,14 @@ const Optimizer: React.FC = () => {
         <h1 className="!text-3xl font-bold text-sky-900 dark:text-gray-100">
           Cut Optimizer
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-gray-600 dark:text-gray-400 !italic sm:text-lg text-sm">
           Optimize your cutting plans to minimize waste and maximize efficiency
         </p>
       </div>
 
       {/* Project Selection */}
       <div className="p-2 mb-2 bg-sky-100/70 card rounded-xl">
-        <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+        <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-slate-900/80">
           Select Project
         </h3>
         {projects.length > 0 ? (
@@ -125,7 +125,7 @@ const Optimizer: React.FC = () => {
                 setSelectedProject(project || null);
                 setResult(null);
               }}
-              className="input-field"
+              className="input-field text-slate-900/80"
             >
               <option value="">Choose a project...</option>
               {projects.map((project) => (
@@ -144,12 +144,12 @@ const Optimizer: React.FC = () => {
 
             {selectedProject && (
               <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
-                <h4 className="mb-2 font-medium text-gray-900 dark:text-gray-100">
+                <h4 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
                   {selectedProject.name}
                 </h4>
                 <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                   <div className="flex items-center">
-                    <Package className="w-4 h-4 mr-2 text-gray-500" />
+                    <Package className="w-4 h-4 mr-2 text-gray-500 dark:text-white" />
                     <span>
                       {selectedProject.planks.reduce(
                         (sum, plank) => sum + plank.quantity,
@@ -159,7 +159,7 @@ const Optimizer: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex items-center">
-                    <Scissors className="w-4 h-4 mr-2 text-gray-500" />
+                    <Scissors className="w-4 h-4 mr-2 text-gray-500 dark:text-white" />
                     <span>
                       {selectedProject.cuts.reduce(
                         (sum, cut) => sum + cut.quantity,
@@ -332,7 +332,7 @@ const Optimizer: React.FC = () => {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-col">
-                      <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                      <h4 className="text-2xl font-medium text-gray-900 dark:text-gray-100">
                         Plank {index + 1}
                       </h4>
                       <p className="text-xs">{optimizedPlank.plank.material}</p>
@@ -350,14 +350,14 @@ const Optimizer: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="flex-col items-start mb-3 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex-col items-start mb-3 text-xs text-gray-600 dark:text-gray-400">
                     <p>
                       <span className="font-bold">L: </span>
-                      {optimizedPlank.plank.length}
+                      {optimizedPlank.plank.length} {settings.unit}
                     </p>
                     <p>
                       <span className="font-bold">l: </span>
-                      {optimizedPlank.plank.width}
+                      {optimizedPlank.plank.width} {settings.unit}
                     </p>
                     <p>
                       <span className="font-bold">Th: </span>{" "}
@@ -369,7 +369,7 @@ const Optimizer: React.FC = () => {
                     {optimizedPlank.placements.length > 0 ? (
                       <table className="min-w-full text-sm text-left border border-gray-200 dark:border-gray-600">
                         <thead>
-                          <tr className="bg-gray-100 dark:bg-gray-700">
+                          <tr className="text-xs bg-gray-100 dark:bg-gray-700">
                             <th className="px-2 py-1">Cut</th>
                             <th className="px-2 py-1">
                               Length {settings.unit}
@@ -426,11 +426,11 @@ const Optimizer: React.FC = () => {
           </div>
 
           {/* Export Actions */}
-          <div className="p-6 card">
+          <div className="p-3 card">
             <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
               Export Results
             </h3>
-            <div className="flex flex-wrap gap-4">
+            <div className="grid flex-wrap gap-4">
               <button
                 onClick={() =>
                   navigate("/export", {
@@ -440,7 +440,7 @@ const Optimizer: React.FC = () => {
                     },
                   })
                 }
-                className="btn-primary"
+                className="btn-primary dark:!bg-red-500/20"
               >
                 Export as PDF
               </button>
@@ -453,7 +453,7 @@ const Optimizer: React.FC = () => {
                     },
                   })
                 }
-                className="btn-secondary"
+                className="btn-secondary dark:!bg-green-500/20"
               >
                 Export Data
               </button>

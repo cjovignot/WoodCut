@@ -41,6 +41,8 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
     });
   });
 
+  const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
   useEffect(() => {
     if (!canvasRef.current || result.optimizedPlanks.length === 0) return;
 
@@ -90,12 +92,12 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
       ctx.strokeRect(x, y, plankWidth, plankHeight);
 
       // Draw plank label
-      ctx.fillStyle = "#000";
+      ctx.fillStyle = isDarkMode ? "#fff" : "#000";
       ctx.font = "14px Arial";
       ctx.fillText(
         `Plank ${index + 1}      L:${plank.length}   l: ${plank.width}   t: ${
           plank.thickness
-        })`,
+        }`,
         x,
         y - 5
       );
@@ -135,7 +137,7 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
 
         // Draw cut label
         if (cutDrawWidth > 40 && cutDrawHeight > 20) {
-          ctx.fillStyle = "#000";
+          ctx.fillStyle = isDarkMode ? "#fff" : "#000";
           ctx.font = "10px Arial";
           const label = cut.label || `${cut.length}×${cut.width}`;
           const textWidth = ctx.measureText(label).width;
@@ -151,7 +153,7 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
 
         // Draw rotation indicator
         if (placement.rotated && cutDrawWidth > 20 && cutDrawHeight > 20) {
-          ctx.fillStyle = "#000";
+          ctx.fillStyle = isDarkMode ? "#fff" : "#000";
           ctx.font = "8px Arial";
           ctx.fillText("R", cutX + 2, cutY + 10);
         }
@@ -182,7 +184,7 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
     // Draw legend
     if (legendItems.length > 0) {
       const legendY = yOffset + 20;
-      ctx.fillStyle = "#000";
+      ctx.fillStyle = isDarkMode ? "#fff" : "#000";
       ctx.font = "12px Arial";
       ctx.fillText("Legend:", 50, legendY);
 
@@ -196,7 +198,7 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
         ctx.fillStyle = item.color + "80"; // même transparence que les rectangles
         ctx.fillRect(legendX, legendItemY - 10, 15, 10);
 
-        ctx.fillStyle = "#000";
+        ctx.fillStyle = isDarkMode ? "#fff" : "#000";
         ctx.font = "10px Arial";
         ctx.fillText(item.label, legendX + 20, legendItemY - 2);
 

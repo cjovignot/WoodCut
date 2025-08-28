@@ -25,19 +25,19 @@ const Settings: React.FC = () => {
   return (
     <div className="pb-20 space-y-6 md:pb-0">
       {/* Header */}
-      <div>
+      <div className="mb-10">
         {" "}
         <h1 className="!text-3xl font-bold text-sky-900 dark:text-gray-100">
           Settings
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-gray-600 dark:text-gray-400 !italic sm:text-lg text-sm">
           Customize your WoodCut Optimizer experience
         </p>
       </div>
 
       {/* Units */}
-      <div className="p-6 card">
-        <div className="flex items-center mb-4">
+      <div className="p-0 mb-10 card">
+        <div className="flex items-center mb-2">
           <Ruler className="w-5 h-5 mr-2 text-wood-600 dark:text-wood-400" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Measurement Units
@@ -46,19 +46,19 @@ const Settings: React.FC = () => {
         <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
           Choose your preferred unit of measurement for all dimensions
         </p>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2">
           {(["mm", "cm", "inches"] as Unit[]).map((unit) => (
             <button
               key={unit}
               onClick={() => handleUnitChange(unit)}
-              className={`p-4 rounded-lg border-2 transition-colors ${
+              className={`!p-2 !text-xs rounded-lg border-2 transition-colors ${
                 settings.unit === unit
-                  ? "border-wood-500 bg-wood-50 dark:bg-wood-900/20 text-wood-700 dark:text-wood-300"
+                  ? "border-wood-500 bg-wood-50 dark:!bg-slate-500/20 text-wood-700 dark:text-wood-300"
                   : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
               }`}
             >
               <div className="text-center">
-                <div className="text-lg font-medium">
+                <div className="font-medium text-md">
                   {unit === "mm"
                     ? "Millimeters"
                     : unit === "cm"
@@ -75,18 +75,18 @@ const Settings: React.FC = () => {
       </div>
 
       {/* Appearance */}
-      <div className="p-6 card">
-        <div className="flex items-center mb-4">
+      <div className="p-0 card">
+        <div className="flex items-center mb-2">
           {settings.darkMode ? (
             <Moon className="w-5 h-5 mr-2 text-wood-600 dark:text-wood-400" />
           ) : (
             <Sun className="w-5 h-5 mr-2 text-wood-600 dark:text-wood-400" />
           )}
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+          <h3 className="text-lg italic font-medium text-gray-900 dark:text-gray-100">
             Appearance
           </h3>
         </div>
-        <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+        <p className="mb-4 text-sm italic text-gray-600 dark:text-gray-400">
           Choose between light and dark mode
         </p>
         <div className="flex items-center justify-between">
