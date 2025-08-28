@@ -112,7 +112,7 @@ const Optimizer: React.FC = () => {
       </div>
 
       {/* Project Selection */}
-      <div className="p-2 mb-2 bg-sky-100/70 card rounded-xl">
+      <div className="max-w-sm p-2 mb-2 rounded-lg bg-sky-100/70 card">
         <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-slate-900/80">
           Select Project
         </h3>

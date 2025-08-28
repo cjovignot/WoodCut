@@ -33,7 +33,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   return (
     <div
-      className="relative p-6 transition cursor-pointer hover:bg-sky-100 max-sm:bg-sky-100/50 duration-400 card hover:shadow-md rounded-xl"
+      className="relative p-6 transition cursor-pointer hover:bg-sky-100 bg-sky-100/50 duration-400 card hover:shadow-md rounded-xl"
       onClick={handleNavigate}
     >
       <div className="flex justify-between">
@@ -47,7 +47,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         >
           <Heart
             className={`w-5 h-5 transition-colors ${
-              project.isFavorite ? "fill-red-500 text-red-500" : "text-gray-400"
+              project.isFavorite
+                ? "fill-red-500/40 text-red-900/50 hover:text-red-900 hover:fill-red-900 duration-400"
+                : "text-gray-400"
             }`}
           />
         </div>

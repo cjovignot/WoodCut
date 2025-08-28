@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Play, Share2 } from "lucide-react";
 import { useProjects } from "../hooks/useProjects";
 import { useSettings } from "../hooks/useSettings";
 import type { Project } from "../types";
@@ -50,6 +50,18 @@ const ProjectDetail: React.FC = () => {
     }
   };
 
+  // Play = Run Optimization
+  const handlePlay = () => {
+    if (!project) return;
+    navigate("/optimizer", { state: { project } });
+  };
+
+  // Export / Share
+  const handleExport = () => {
+    if (!project) return;
+    navigate("/export", { state: { project } });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -86,7 +98,7 @@ const ProjectDetail: React.FC = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="!text-xl font-bold text-gray-900 sm:text-2xl dark:text-gray-100">
               {project.name}
             </h1>
             {project.description && (
@@ -96,14 +108,37 @@ const ProjectDetail: React.FC = () => {
             )}
           </div>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="flex items-center btn-primary !bg-green-800 text-white hover:!bg-white hover:!text-green-900 hover:!border-green-900"
-        >
-          <Save className="w-4 h-4 mr-2" />
-          {saving ? "Saving..." : "Save"}
-        </button>
+        {/* Actions */}
+        <div className="grid grid-cols-3">
+          {/* Save */}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="max-sm:fixed max-sm:bottom-14 max-sm:left-0 sm:relative flex justify-center items-center max-sm:!rounded-tr-xl !rounded-none sm:!rounded-xl btn-primary max-sm:!bg-green-800 sm:!bg-green-800/50 text-white hover:!bg-green-900  hover:!border-green-900"
+          >
+            <Save className="w-6 h-4" />
+            {saving ? "Saving..." : "Save"}
+          </button>
+
+          {/* Export / Share */}
+          <button
+            onClick={handleExport}
+            className="sm:mx-2 max-sm:fixed max-sm:bottom-14 max-sm:left-1/2 max-sm:!transform max-sm:!-translate-x-1/2 flex justify-center items-center max-sm:!rounded-t-xl !rounded-none sm:!rounded-xl btn-primary max-sm:!bg-gray-800 sm:!bg-gray-800/50 text-white hover:!bg-gray-900  hover:!border-gray-900"
+          >
+            <Share2 className="w-6 h-4" />
+            Export
+          </button>
+
+          {/* Play */}
+          <button
+            onClick={handlePlay}
+            disabled={project.planks.length === 0 || project.cuts.length === 0}
+            className="max-sm:fixed  max-sm:bottom-14 max-sm:right-0 sm:relative flex justify-center items-center  max-sm:!rounded-tl-xl !rounded-none sm:!rounded-xl btn-primary max-sm:!bg-sky-800 sm:!bg-sky-900/50 text-white hover:!bg-sky-900 hover:!border-sky-900"
+          >
+            <Play className="w-6 h-4" />
+            Play
+          </button>
+        </div>
       </div>
 
       {/* Project Details Form */}
@@ -165,33 +200,6 @@ const ProjectDetail: React.FC = () => {
         }}
         unit={settings?.unit || "mm"}
       />
-
-      {/* Quick Actions */}
-      <div className="p-6 card">
-        <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
-          Quick Actions
-        </h3>
-        <div className="flex flex-wrap gap-4">
-          <button
-            onClick={() => navigate("/optimizer", { state: { project } })}
-            className="btn-primary"
-            disabled={project.planks.length === 0 || project.cuts.length === 0}
-          >
-            Run Optimization
-          </button>
-          <button
-            onClick={() => navigate("/export", { state: { project } })}
-            className="btn-secondary"
-          >
-            Export Project
-          </button>
-        </div>
-        {(project.planks.length === 0 || project.cuts.length === 0) && (
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Add at least one plank and one cut to run optimization
-          </p>
-        )}
-      </div>
     </div>
   );
 };
