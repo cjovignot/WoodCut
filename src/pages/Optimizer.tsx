@@ -16,7 +16,7 @@ import OptimizationVisualization from "../components/OptimizationVisualization";
 const Optimizer: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { settings } = useSettings();
+  const { settings = { unit: "mm", darkMode: false } } = useSettings();
   const { projects } = useProjects();
   const [selectedProject, setSelectedProject] = useState<Project | null>(
     location.state?.project || null
@@ -309,7 +309,7 @@ const Optimizer: React.FC = () => {
                     className="text-sm text-red-600 dark:text-red-400"
                   >
                     • {cut.label || "Unnamed cut"}: {cut.length} × {cut.width} ×{" "}
-                    {cut.thickness} {settings.unit}
+                    {cut.thickness} {settings?.unit}
                   </div>
                 ))}
               </div>
@@ -317,8 +317,10 @@ const Optimizer: React.FC = () => {
           )}
 
           {/* Visualization */}
-          <OptimizationVisualization result={result} unit={settings.unit} />
-
+          <OptimizationVisualization
+            result={result}
+            unit={settings?.unit || "mm"}
+          />
           {/* Detailed Results */}
           <div className="p-0 card">
             <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -353,15 +355,15 @@ const Optimizer: React.FC = () => {
                   <div className="flex-col items-start mb-3 text-xs text-gray-600 dark:text-gray-400">
                     <p>
                       <span className="font-bold">L: </span>
-                      {optimizedPlank.plank.length} {settings.unit}
+                      {optimizedPlank.plank.length} {settings?.unit}
                     </p>
                     <p>
                       <span className="font-bold">l: </span>
-                      {optimizedPlank.plank.width} {settings.unit}
+                      {optimizedPlank.plank.width} {settings?.unit}
                     </p>
                     <p>
                       <span className="font-bold">Th: </span>{" "}
-                      {optimizedPlank.plank.thickness} {settings.unit}
+                      {optimizedPlank.plank.thickness} {settings?.unit}
                     </p>
                   </div>
 
@@ -372,11 +374,13 @@ const Optimizer: React.FC = () => {
                           <tr className="text-xs bg-gray-100 dark:bg-gray-700">
                             <th className="px-2 py-1">Cut</th>
                             <th className="px-2 py-1">
-                              Length {settings.unit}
+                              Length {settings?.unit}
                             </th>
-                            <th className="px-2 py-1">Width {settings.unit}</th>
                             <th className="px-2 py-1">
-                              Thickness {settings.unit}
+                              Width {settings?.unit}
+                            </th>
+                            <th className="px-2 py-1">
+                              Thickness {settings?.unit}
                             </th>
                             <th className="px-2 py-1">Rotated</th>
                             <th className="px-2 py-1">X</th>
