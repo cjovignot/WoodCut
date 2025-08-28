@@ -54,6 +54,7 @@ export interface OptimizationResult {
 export type Unit = "mm" | "cm" | "inches";
 
 export interface Settings {
-  unit: Unit;
+  id?: number; // facultatif pour IndexedDB
+  unit: "mm" | "cm" | "inches";
   darkMode: boolean;
 }

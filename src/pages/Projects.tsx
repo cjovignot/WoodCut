@@ -73,7 +73,7 @@ const Projects: React.FC = () => {
     <div className="pb-20 space-y-6 md:pb-0">
       {/* Header */}
       <div className="flex justify-between m-0 mb-2">
-        <h1 className="!text-3xl font-bold text-sky-900 dark:text-gray-100">
+        <h1 className="!text-3xl font-bold text-wood-600 dark:text-gray-100">
           Projects
         </h1>
 
@@ -86,7 +86,7 @@ const Projects: React.FC = () => {
         </button>
       </div>
 
-      <p className="text-gray-600 dark:text-gray-400 !italic sm:text-lg text-sm">
+      <p className="text-wood-600 dark:text-gray-400 !italic sm:text-lg text-sm">
         Manage your woodworking projects and cutting plans
       </p>
 

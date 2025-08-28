@@ -30,7 +30,7 @@ const Layout: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-8 mx-auto max-w-screen sm:px-6 lg:px-8">
+      <main className="px-4 py-8 mx-auto w-screen !max-w-screen sm:px-6 lg:px-8">
         <Outlet />
       </main>
 

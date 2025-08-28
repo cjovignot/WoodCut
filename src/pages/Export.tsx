@@ -82,16 +82,16 @@ const Export: React.FC = () => {
       <div className="flex items-center space-x-4">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          className="p-2 text-gray-400 dark:!bg-sky-200/60 hover:text-gray-600 dark:text-slate-900 dark:hover:text-gray-300"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="">
           {" "}
-          <h1 className="!text-3xl font-bold text-sky-900 dark:text-gray-100">
+          <h1 className="!text-3xl font-bold text-wood-600 dark:text-gray-100">
             Export & Import
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-wood-600 dark:text-gray-400">
             Export your projects and optimization results, or import existing
             projects
           </p>

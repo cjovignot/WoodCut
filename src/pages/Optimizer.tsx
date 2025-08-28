@@ -103,10 +103,10 @@ const Optimizer: React.FC = () => {
       {/* Header */}
       <div>
         {" "}
-        <h1 className="!text-3xl font-bold text-sky-900 dark:text-gray-100">
+        <h1 className="!text-3xl font-bold text-wood-600 dark:text-gray-100">
           Cut Optimizer
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 !italic sm:text-lg text-sm">
+        <p className="text-gray-600 text-wood-600 dark:text-gray-400 !italic sm:text-lg text-sm">
           Optimize your cutting plans to minimize waste and maximize efficiency
         </p>
       </div>
