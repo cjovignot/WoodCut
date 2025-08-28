@@ -153,7 +153,7 @@ const ProjectDetail: React.FC = () => {
           setProject(updatedProject);
           await updateProject(updatedProject.id, updatedProject);
         }}
-        unit={settings.unit}
+        unit={settings?.unit || "mm"}
       />
 
       {/* Cuts Section */}
@@ -163,7 +163,7 @@ const ProjectDetail: React.FC = () => {
           setProject(updatedProject);
           await updateProject(updatedProject.id, updatedProject);
         }}
-        unit={settings.unit}
+        unit={settings?.unit || "mm"}
       />
 
       {/* Quick Actions */}
