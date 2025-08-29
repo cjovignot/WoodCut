@@ -445,7 +445,8 @@ export class WoodCutOptimizer {
       const stillUnplaced: RequiredCut[] = [];
       for (const cut of remainingCuts) {
         const cutArea = cut.length * cut.width;
-        if (cutArea <= plankArea) {
+        // Vérifier que la planche est assez épaisse
+        if (cut.thickness <= plank.thickness && cutArea <= plankArea) {
           plankArea -= cutArea; // on "place" la coupe
         } else {
           stillUnplaced.push(cut); // reste à placer
@@ -454,7 +455,7 @@ export class WoodCutOptimizer {
       remainingCuts = stillUnplaced;
     }
 
-    return addedPlanks;
+    return addedPlanks + 1; // +1 Remplace la planche utilisée comme référence
   }
 
   private calculateResults(
@@ -500,7 +501,6 @@ export class WoodCutOptimizer {
       planksUsed: optimizedPlanks.filter((p) => p.placements.length > 0).length,
       cutsPlaced,
       unplacedCuts,
-      // champs manquants :
       totalWaste,
       yield: yieldPercent,
       sawWasteArea,

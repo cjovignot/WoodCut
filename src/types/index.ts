@@ -1,19 +1,21 @@
-export interface WoodPlank {
+export interface RequiredCut {
   id: string;
   length: number;
+  label: string;
   width: number;
   thickness: number;
   material: string;
   quantity: number;
 }
 
-export interface RequiredCut {
+export interface WoodPlank {
   id: string;
   length: number;
+  label: string;
   width: number;
   thickness: number;
+  material: string;
   quantity: number;
-  label?: string;
 }
 
 export interface Project {

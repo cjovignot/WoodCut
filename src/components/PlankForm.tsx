@@ -16,6 +16,7 @@ const PlankForm: React.FC<PlankFormProps> = ({
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     length: "",
+    label: "",
     width: "",
     thickness: "",
     material: "",
@@ -31,6 +32,7 @@ const PlankForm: React.FC<PlankFormProps> = ({
 
     const newPlank: WoodPlank = {
       id: crypto.randomUUID(),
+      label: formData?.label,
       length: parseFloat(formData.length),
       width: parseFloat(formData.width),
       thickness: parseFloat(formData.thickness),
@@ -50,6 +52,7 @@ const PlankForm: React.FC<PlankFormProps> = ({
     // Reset form
     setFormData({
       length: "",
+      label: "",
       width: "",
       thickness: "",
       material: "",

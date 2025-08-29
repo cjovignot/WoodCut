@@ -6,14 +6,17 @@ import {
   Package,
   Scissors,
   AlertTriangle,
+  Plus,
 } from "lucide-react";
 import type { Project, OptimizationResult } from "../types";
+// Dans ton composant
 import { optimizer } from "../services/optimizer";
 import { useSettings } from "../hooks/useSettings";
 import { useProjects } from "../hooks/useProjects";
 import OptimizationVisualization from "../components/OptimizationVisualization";
 
 const Optimizer: React.FC = () => {
+  const { updateProject } = useProjects();
   const location = useLocation();
   const navigate = useNavigate();
   const { settings = { unit: "mm", darkMode: false } } = useSettings();
@@ -97,6 +100,54 @@ const Optimizer: React.FC = () => {
       return `${totalArea.toFixed(0)} mm²`;
     }
   }
+
+  // Ajouter les planches supplémentaires estimées au stock
+  const addEstimatedPlanksToStock = async () => {
+    if (!selectedProject || !result) return;
+
+    const updatedPlanks = [...selectedProject.planks];
+    const numToAdd = result.additionalPlanksNeeded;
+
+    // On prend la première planche comme référence
+    const basePlank = selectedProject.planks[0];
+    if (!basePlank) return;
+
+    const existingIndex = updatedPlanks.findIndex(
+      (p) =>
+        p.length === basePlank.length &&
+        p.width === basePlank.width &&
+        p.thickness === basePlank.thickness &&
+        p.material === basePlank.material
+    );
+
+    if (existingIndex >= 0) {
+      updatedPlanks.push({
+        ...basePlank,
+        id: crypto.randomUUID(),
+        quantity: numToAdd,
+      });
+    } else {
+      updatedPlanks[existingIndex].quantity += numToAdd;
+      console.log("coucou");
+    }
+
+    const updatedProject: Project = {
+      ...selectedProject,
+      planks: updatedPlanks,
+      updatedAt: new Date(),
+    };
+
+    setSelectedProject(updatedProject);
+
+    try {
+      // Sauvegarde automatique du projet
+      await updateProject(updatedProject.id, updatedProject);
+      alert(`${numToAdd} planks added & project saved !`);
+    } catch (error) {
+      console.error("Failed to save project:", error);
+      alert("Error : planks added BUT project not saved.");
+    }
+  };
 
   return (
     <div className="pb-20 space-y-6 md:pb-0">
@@ -339,6 +390,18 @@ const Optimizer: React.FC = () => {
               <div className="mt-2 text-sm text-red-800 dark:text-red-200">
                 Estimated additional planks needed:{" "}
                 {result.additionalPlanksNeeded}
+                {result && (
+                  <div className="flex justify-end mt-4">
+                    <button
+                      type="button"
+                      onClick={addEstimatedPlanksToStock}
+                      className="btn-primary dark:!bg-sky-900 flex items-center"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Ajouter les planches au stock
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
