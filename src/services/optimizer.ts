@@ -47,7 +47,6 @@ export class WoodCutOptimizer {
     const expandedPlanks = this.expandPlanks(planks);
     const expandedCuts = this.expandCuts(cuts);
 
-    // Construire une séquence initiale (ordre aléatoire + rotations aléatoires)
     const mkInitialSeq = (): SeqGene[] =>
       this.shuffle(
         expandedCuts.map((c) => ({ id: c.id!, rotate: rng() < 0.5 })),
@@ -76,7 +75,6 @@ export class WoodCutOptimizer {
           cfg.endTemp
         );
 
-        // Essayer plusieurs voisins et garder le meilleur voisin de l'itération
         let localBestSeq = seq;
         let localBestFit = currFit;
         let localBestRes = currRes;
@@ -97,7 +95,6 @@ export class WoodCutOptimizer {
           }
         }
 
-        // Critère d’acceptation (Metropolis)
         const accept =
           localBestFit < currFit ||
           rng() < Math.exp((currFit - localBestFit) / Math.max(1e-9, t));
@@ -118,7 +115,6 @@ export class WoodCutOptimizer {
       }
     }
 
-    // On renvoie la meilleure configuration trouvée
     return globalBest!.result;
   }
 
@@ -128,7 +124,6 @@ export class WoodCutOptimizer {
     t0: number,
     tf: number
   ): number {
-    // décroissance exponentielle (peut être changée)
     const alpha = Math.pow(tf / t0, it / Math.max(1, maxIt - 1));
     return t0 * alpha;
   }
@@ -137,13 +132,11 @@ export class WoodCutOptimizer {
     const neighbor = [...seq];
     const op = Math.floor(rng() * 3);
     if (op === 0 && neighbor.length >= 2) {
-      // swap deux positions
       const i = Math.floor(rng() * neighbor.length);
       let j = Math.floor(rng() * neighbor.length);
       if (i === j) j = (j + 1) % neighbor.length;
       [neighbor[i], neighbor[j]] = [neighbor[j], neighbor[i]];
     } else if (op === 1) {
-      // inverser un segment (2-opt)
       const i = Math.floor(rng() * neighbor.length);
       const j = Math.floor(rng() * neighbor.length);
       const a = Math.min(i, j),
@@ -151,7 +144,6 @@ export class WoodCutOptimizer {
       const segment = neighbor.slice(a, b + 1).reverse();
       neighbor.splice(a, segment.length, ...segment);
     } else {
-      // flip orientation d’un gène
       const i = Math.floor(rng() * neighbor.length);
       neighbor[i] = { ...neighbor[i], rotate: !neighbor[i].rotate };
     }
@@ -164,33 +156,28 @@ export class WoodCutOptimizer {
     seq: SeqGene[],
     unplacedPenalty: number
   ): { result: OptimizationResult; fitness: number } {
-    // Reconstruire la liste des coupes dans l’ordre séquentiel demandé
     const cutsById = new Map(expandedCuts.map((c) => [c.id!, c]));
     const orderedCuts: RequiredCut[] = [];
     for (const g of seq) {
       const c = cutsById.get(g.id);
-      if (c) orderedCuts.push({ ...c }); // copie
+      if (c) orderedCuts.push({ ...c });
     }
 
-    // Appliquer un packing bottom-left **déterministe** en respectant seq + orientations
     const { optimizedPlanks, unplacedCuts } = this.packBottomLeft(
       planks,
       orderedCuts,
       seq
     );
 
-    // Fitness = (waste area total) + pénalité si non placé
     const wasteArea = optimizedPlanks.reduce((s, p) => s + p.wasteArea, 0);
     const fitness =
       wasteArea +
       (unplacedCuts.length > 0 ? unplacedPenalty * unplacedCuts.length : 0);
 
-    // Calculer les agrégats finaux (réutilise ta méthode)
     const result = this.calculateResults(optimizedPlanks, unplacedCuts);
     return { result, fitness };
   }
 
-  // ==== Packer déterministe (bottom-left) utilisé par l’évaluateur ===========
   private packBottomLeft(
     planks: WoodPlank[],
     cutsInOrder: RequiredCut[],
@@ -200,14 +187,12 @@ export class WoodCutOptimizer {
     const unplacedCuts: RequiredCut[] = [];
     const orientMap = new Map(seq.map((g) => [g.id, g.rotate]));
 
-    // on travaille avec une copie de stock pour ne pas le muter entre évaluations
     const stock: WoodPlank[] = this.expandPlanks(planks);
 
     for (const cut of cutsInOrder) {
       let placed = false;
       const preferredRotate = orientMap.get(cut.id!);
 
-      // 1) Tenter sur les planches ouvertes
       let best: {
         plank: OptimizedPlank;
         placement: CutPlacement;
@@ -233,7 +218,6 @@ export class WoodCutOptimizer {
         placed = true;
       }
 
-      // 2) Sinon ouvrir une nouvelle planche
       if (!placed) {
         const next = stock.shift();
         if (next) {
@@ -249,7 +233,6 @@ export class WoodCutOptimizer {
             optimizedPlanks.push(newOpt);
             placed = true;
           } else {
-            // même la planche neuve ne convient pas → rejetée
             unplacedCuts.push(cut);
           }
         } else {
@@ -266,7 +249,6 @@ export class WoodCutOptimizer {
     cut: RequiredCut,
     preferredRotate?: boolean
   ): CutPlacement | null {
-    // essaie d’abord l’orientation préférée, puis l’autre
     const orientations =
       preferredRotate == null
         ? [
@@ -307,7 +289,6 @@ export class WoodCutOptimizer {
     return best;
   }
 
-  // ==== Utilitaires packing (tes fonctions, reprises/adaptées) ===============
   private expandCuts(cuts: RequiredCut[]): RequiredCut[] {
     const expanded: RequiredCut[] = [];
     cuts.forEach((cut) => {
@@ -335,6 +316,7 @@ export class WoodCutOptimizer {
       wasteArea: plank.length * plank.width,
       wasteLength: plank.length,
       efficiency: 0,
+      sawWasteArea: 0, // <-- ajouté ici
     };
   }
 
@@ -407,23 +389,33 @@ export class WoodCutOptimizer {
 
   private updatePlankStats(optimizedPlank: OptimizedPlank): void {
     const { plank, placements } = optimizedPlank;
-    let usedLength = 0;
-    placements.forEach((p) => {
-      const cutLength = p.rotated ? p.cut.width : p.cut.length;
-      usedLength += cutLength;
-    });
-
-    optimizedPlank.wasteLength = plank.length - usedLength;
-    optimizedPlank.efficiency = (usedLength / plank.length) * 100;
 
     const totalArea = plank.length * plank.width;
     let usedArea = 0;
+    let sawLoss = 0;
+
     placements.forEach((p) => {
       const cutLength = p.rotated ? p.cut.width : p.cut.length;
       const cutWidth = p.rotated ? p.cut.length : p.cut.width;
       usedArea += cutLength * cutWidth;
+
+      // Estimer la perte due aux traits de scie (2 arêtes au moins par pièce)
+      sawLoss += (cutLength + cutWidth) * this.sawThickness;
     });
-    optimizedPlank.wasteArea = totalArea - usedArea;
+
+    optimizedPlank.sawWasteArea = sawLoss; // <-- on stocke la perte scie
+    optimizedPlank.wasteArea = totalArea - usedArea + sawLoss; // total perte
+    optimizedPlank.wasteLength =
+      plank.length -
+      placements.reduce((s, p) => {
+        const cutLength = p.rotated ? p.cut.width : p.cut.length;
+        return s + cutLength;
+      }, 0);
+
+    optimizedPlank.efficiency =
+      totalArea > 0
+        ? ((totalArea - optimizedPlank.wasteArea) / totalArea) * 100
+        : 0;
   }
 
   private calculateResults(
@@ -434,7 +426,7 @@ export class WoodCutOptimizer {
       (sum, p) => sum + p.wasteArea,
       0
     );
-    const totalLengthWaste = optimizedPlanks.reduce(
+    const totalWasteLength = optimizedPlanks.reduce(
       (sum, p) => sum + (p.wasteLength ?? 0),
       0
     );
@@ -442,15 +434,33 @@ export class WoodCutOptimizer {
       (sum, p) => sum + p.plank.length * p.plank.width,
       0
     );
-    const totalEfficiency =
+
+    const sawWasteArea = optimizedPlanks.reduce((sum, p) => {
+      // ici tu peux stocker dans OptimizedPlank la part estimée due au trait de scie
+      return sum + (p.sawWasteArea ?? 0);
+    }, 0);
+
+    const totalWaste = totalWasteArea; // si c’est la même chose
+    const yieldPercent =
       totalArea > 0 ? ((totalArea - totalWasteArea) / totalArea) * 100 : 0;
+
+    const cutsPlaced = optimizedPlanks.reduce(
+      (s, p) => s + p.placements.length,
+      0
+    );
 
     return {
       optimizedPlanks,
-      totalWaste: totalLengthWaste,
-      totalEfficiency,
-      planksUsed: optimizedPlanks.length,
+      totalWasteArea,
+      totalWasteLength,
+      totalEfficiency: yieldPercent,
+      planksUsed: optimizedPlanks.filter((p) => p.placements.length > 0).length,
+      cutsPlaced,
       unplacedCuts,
+      // champs manquants :
+      totalWaste,
+      yield: yieldPercent,
+      sawWasteArea,
     };
   }
 
@@ -465,7 +475,6 @@ export class WoodCutOptimizer {
   }
 
   private makeRng(seed: number): () => number {
-    // LCG simple, suffisant pour notre usage
     let s = seed >>> 0;
     return () => {
       s = (1664525 * s + 1013904223) >>> 0;

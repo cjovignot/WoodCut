@@ -41,13 +41,19 @@ export interface OptimizedPlank {
   wasteDisplay?: string;
   wasteLength?: number;
   efficiency: number;
+  sawWasteArea?: number;
 }
 
 export interface OptimizationResult {
   optimizedPlanks: OptimizedPlank[];
-  totalWaste: number;
+  totalWasteArea: number;
+  totalWaste?: number;
+  yield?: number;
+  sawWasteArea?: number;
+  totalWasteLength: number;
   totalEfficiency: number;
   planksUsed: number;
+  cutsPlaced: number;
   unplacedCuts: RequiredCut[];
 }
 
