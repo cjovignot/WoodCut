@@ -303,15 +303,42 @@ const Optimizer: React.FC = () => {
                 The following cuts could not be placed on available planks:
               </p>
               <div className="space-y-1">
-                {result.unplacedCuts.map((cut) => (
-                  <div
-                    key={cut.id}
-                    className="text-sm text-red-600 dark:text-red-400"
-                  >
-                    • {cut.label || "Unnamed cut"}: {cut.length} × {cut.width} ×{" "}
-                    {cut.thickness} {settings?.unit}
-                  </div>
-                ))}
+                {(() => {
+                  const groupedCuts = new Map<
+                    string,
+                    {
+                      cut: OptimizationResult["unplacedCuts"][0];
+                      count: number;
+                    }
+                  >();
+                  result.unplacedCuts.forEach((cut) => {
+                    const key = `${cut.length}x${cut.width}x${cut.thickness}|${
+                      cut.label || "Unnamed cut"
+                    }`;
+                    if (groupedCuts.has(key)) {
+                      groupedCuts.get(key)!.count += 1;
+                    } else {
+                      groupedCuts.set(key, { cut, count: 1 });
+                    }
+                  });
+
+                  return Array.from(groupedCuts.values()).map(
+                    ({ cut, count }) => (
+                      <div
+                        key={`${cut.id}-${cut.length}-${cut.width}-${cut.thickness}`}
+                        className="text-sm text-red-600 dark:text-red-400"
+                      >
+                        • {cut.label || "Unnamed cut"}: {cut.length} ×{" "}
+                        {cut.width} × {cut.thickness} {settings?.unit} (×{count}
+                        )
+                      </div>
+                    )
+                  );
+                })()}
+              </div>
+              <div className="mt-2 text-sm text-red-800 dark:text-red-200">
+                Estimated additional planks needed:{" "}
+                {result.additionalPlanksNeeded}
               </div>
             </div>
           )}
