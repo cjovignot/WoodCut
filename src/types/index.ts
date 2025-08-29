@@ -4,7 +4,6 @@ export interface RequiredCut {
   label: string;
   width: number;
   thickness: number;
-  material: string;
   quantity: number;
 }
 

@@ -40,7 +40,7 @@ const CutForm: React.FC<CutFormProps> = ({
       width: parseFloat(formData.width),
       thickness: parseFloat(formData.thickness),
       quantity: parseInt(formData.quantity),
-      label: formData.label || undefined,
+      label: formData.label,
     };
 
     const updatedProject: Project = {
