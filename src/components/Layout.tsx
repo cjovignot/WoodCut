@@ -20,7 +20,7 @@ const Layout: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0">
-                <h1 className="font-[Roboto] !text-2xl font-bold text-white dark:text-wood-400">
+                <h1 className="font-sans !text-2xl font-bold text-white dark:text-wood-400">
                   WoodCut Optimizer
                 </h1>
               </div>
