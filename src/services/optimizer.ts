@@ -426,6 +426,45 @@ export class WoodCutOptimizer {
     optimizedPlank.wasteArea = totalArea - usedArea;
   }
 
+  private estimateAdditionalPlanks(
+    unplacedCuts: RequiredCut[],
+    stock: WoodPlank[]
+  ): number {
+    if (!unplacedCuts.length || !stock.length) return 0;
+
+    let remainingCuts = [...unplacedCuts];
+    let addedPlanks = 0;
+
+    // On trie le stock par surface décroissante pour choisir la plus grande planche disponible
+    const sortedStock = [...stock].sort(
+      (a, b) => b.length * b.width - a.length * a.width
+    );
+
+    while (remainingCuts.length > 0) {
+      addedPlanks++;
+      // Choisir la plus grande planche disponible
+      const plank = sortedStock[0];
+      let plankArea = plank.length * plank.width;
+
+      // Trier les coupes par surface décroissante
+      remainingCuts.sort((a, b) => b.length * b.width - a.length * a.width);
+
+      // Simuler placement "area fit" simple
+      const stillUnplaced: RequiredCut[] = [];
+      for (const cut of remainingCuts) {
+        const cutArea = cut.length * cut.width;
+        if (cutArea <= plankArea) {
+          plankArea -= cutArea; // on "place" la coupe
+        } else {
+          stillUnplaced.push(cut); // reste à placer
+        }
+      }
+      remainingCuts = stillUnplaced;
+    }
+
+    return addedPlanks;
+  }
+
   private calculateResults(
     optimizedPlanks: OptimizedPlank[],
     unplacedCuts: RequiredCut[]
@@ -445,12 +484,18 @@ export class WoodCutOptimizer {
     const totalEfficiency =
       totalArea > 0 ? ((totalArea - totalWasteArea) / totalArea) * 100 : 0;
 
+    const additionalPlanksNeeded = this.estimateAdditionalPlanks(
+      unplacedCuts,
+      optimizedPlanks.map((p) => p.plank)
+    );
+
     return {
       optimizedPlanks,
       totalWaste: totalLengthWaste,
       totalEfficiency,
       planksUsed: optimizedPlanks.length,
       unplacedCuts,
+      additionalPlanksNeeded,
     };
   }
 

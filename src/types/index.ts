@@ -49,6 +49,7 @@ export interface OptimizationResult {
   totalEfficiency: number;
   planksUsed: number;
   unplacedCuts: RequiredCut[];
+  additionalPlanksNeeded: number;
 }
 
 export type Unit = "mm" | "cm" | "inches";
