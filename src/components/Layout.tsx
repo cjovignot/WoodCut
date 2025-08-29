@@ -16,16 +16,14 @@ const Layout: React.FC = () => {
     <div className="min-h-screen w-screen sm:w-[99vw] bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="shadow-sm bg-sky-900 dark:bg-gray-800 sm:hidden">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <h1 className="font-sans !text-2xl font-bold text-white dark:text-wood-400">
-                  WoodCut Optimizer
-                </h1>
-              </div>
-            </div>
-          </div>
+        <div className="flex items-center justify-center h-16">
+          <h1 className="sr-only">WoodCut Optimizer</h1>
+          <img
+            className="!max-w-[90vw]"
+            src={"src/assets/logo_white.svg"}
+            alt="Logo"
+            style={{ height: "auto" }}
+          />
         </div>
       </header>
 
@@ -60,10 +58,14 @@ const Layout: React.FC = () => {
       {/* Desktop Sidebar */}
       <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:flex md:w-64 md:flex-col">
         <div className="flex flex-col flex-grow pt-5 bg-sky-900 dark:bg-gray-800">
-          <div className="flex items-center flex-shrink-0 px-3">
-            <h1 className="!text-2xl font-bold text-white dark:text-wood-400">
-              WoodCut Optimizer
-            </h1>
+          <div className="flex items-center justify-center h-16">
+            <h1 className="sr-only">WoodCut Optimizer</h1>
+            <img
+              className="!max-w-56"
+              src={"src/assets/logo_white.svg"}
+              alt="Logo"
+              style={{ height: "auto" }}
+            />
           </div>
           <div className="flex flex-col flex-grow mt-8">
             <nav className="flex-1 px-2 space-y-1">

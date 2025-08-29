@@ -51,7 +51,7 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
     if (!ctx) return;
 
     const marginX = 50;
-    const marginY = 20;
+    const marginY = 50;
     const spacingY = 20;
 
     const maxPlankLength = Math.max(

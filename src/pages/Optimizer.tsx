@@ -343,14 +343,14 @@ const Optimizer: React.FC = () => {
 
           {/* Unplaced Cuts Warning */}
           {result.unplacedCuts.length > 0 && (
-            <div className="p-4 border-l-4 border-red-500 card">
-              <div className="flex items-center mb-2">
-                <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
-                <h4 className="font-medium text-red-800 dark:text-red-200">
+            <div className="p-4 text-center border-l-4 border-red-500 dark:border-red-500/90 card">
+              <div className="flex items-center justify-center mb-2">
+                <AlertTriangle className="w-8 h-8 mr-2 text-red-500 dark:text-red-500/90" />
+                <h4 className="font-medium text-red-800 dark:text-red-500/90">
                   Unplaced Cuts ({result.unplacedCuts.length})
                 </h4>
               </div>
-              <p className="mb-2 text-sm text-red-700 dark:text-red-300">
+              <p className="mb-2 text-xs text-red-700 dark:text-red-300">
                 The following cuts could not be placed on available planks:
               </p>
               <div className="space-y-1">
@@ -373,32 +373,71 @@ const Optimizer: React.FC = () => {
                     }
                   });
 
-                  return Array.from(groupedCuts.values()).map(
-                    ({ cut, count }) => (
-                      <div
-                        key={`${cut.id}-${cut.length}-${cut.width}-${cut.thickness}`}
-                        className="text-sm text-red-600 dark:text-red-400"
-                      >
-                        • {cut.label || "Unnamed cut"}: {cut.length} ×{" "}
-                        {cut.width} × {cut.thickness} {settings?.unit} (×{count}
-                        )
-                      </div>
-                    )
+                  return (
+                    <table className="w-full m-auto text-xs border border-gray-300 sm:max-w-xs">
+                      <thead className="bg-gray-100 dark:bg-gray-800">
+                        <tr>
+                          <th className="px-2 py-1 text-center border !font-medium">
+                            #
+                          </th>
+                          <th className="px-2 py-1 text-center border !font-medium">
+                            Length ({settings?.unit})
+                          </th>
+                          <th className="px-2 py-1 text-center border !font-medium">
+                            Width ({settings?.unit})
+                          </th>
+                          <th className="px-2 py-1 text-center border !font-medium">
+                            Thick ({settings?.unit})
+                          </th>
+                          <th className="px-2 py-1 text-center border !font-medium">
+                            Qty
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Array.from(groupedCuts.values()).map(
+                          ({ cut, count }) => (
+                            <tr
+                              key={`${cut.id}-${cut.length}-${cut.width}-${cut.thickness}`}
+                              className="text-black dark:text-white"
+                            >
+                              <td className="px-2 py-1 border">
+                                {cut.label || "Unnamed cut"}
+                              </td>
+                              <td className="px-2 py-1 text-right border">
+                                {cut.length}
+                              </td>
+                              <td className="px-2 py-1 text-right border">
+                                {cut.width}
+                              </td>
+                              <td className="px-2 py-1 text-right border">
+                                {cut.thickness}
+                              </td>
+                              <td className="px-2 py-1 text-right border">
+                                ×{count}
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
                   );
                 })()}
               </div>
-              <div className="mt-2 text-sm text-red-800 dark:text-red-200">
-                Estimated additional planks needed:{" "}
-                {result.additionalPlanksNeeded}
+              <div className="flex-col p-2 text-center m-auto mt-2 !text-xs text-red-900 sm:!justify-items-center align-center w-fit rounded-xl">
+                <div className="text-green-700 dark:text-green-300">
+                  Estimated additional planks needed:{" "}
+                  {result.additionalPlanksNeeded}
+                </div>
                 {result && (
-                  <div className="flex justify-end mt-4">
+                  <div className="flex justify-center mt-3">
                     <button
                       type="button"
                       onClick={addEstimatedPlanksToStock}
-                      className="btn-primary dark:!bg-sky-900 flex items-center"
+                      className="btn-primary !bg-red-900 text-white dark:!bg-red-900/70 flex items-center !text-xs"
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                      Ajouter les planches au stock
+                      Add {result.additionalPlanksNeeded} planks to the stock
                     </button>
                   </div>
                 )}
