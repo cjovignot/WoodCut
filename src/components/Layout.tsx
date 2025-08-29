@@ -20,7 +20,7 @@ const Layout: React.FC = () => {
           <h1 className="sr-only">WoodCut Optimizer</h1>
           <img
             className="!max-w-[90vw]"
-            src={"src/assets/logo_white.svg"}
+            src={"/logo_white.svg"}
             alt="Logo"
             style={{ height: "auto" }}
           />
@@ -62,7 +62,7 @@ const Layout: React.FC = () => {
             <h1 className="sr-only">WoodCut Optimizer</h1>
             <img
               className="!max-w-56"
-              src={"src/assets/logo_white.svg"}
+              src={"/logo_white.svg"}
               alt="Logo"
               style={{ height: "auto" }}
             />
