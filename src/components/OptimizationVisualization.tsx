@@ -281,6 +281,7 @@ const OptimizationVisualization: React.FC<OptimizationVisualizationProps> = ({
           />
         </div>
       </div>
+      {/* test */}
       <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
         <p>• Each colored rectangle represents a cut piece</p>
         <p>• "R" indicates the piece should be rotated</p>
