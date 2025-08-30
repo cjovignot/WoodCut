@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { Home, Settings, FileText, Zap } from "lucide-react";
+import { Favicon_512, Logo_text_only } from "../assets/SVG_components";
 
 const Layout: React.FC = () => {
   const location = useLocation();
@@ -16,13 +17,14 @@ const Layout: React.FC = () => {
     <div className="min-h-screen w-screen sm:w-[99vw] bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="shadow-sm bg-sky-900 dark:bg-gray-800 sm:hidden">
-        <div className="flex items-center justify-center h-16">
+        <div className="flex items-center justify-start h-16 mx-2">
           <h1 className="sr-only">WoodCut Optimizer</h1>
-          <img
-            className="!max-w-[90vw]"
-            src={"/logo_white.svg"}
-            alt="Logo"
-            style={{ height: "auto" }}
+          <Favicon_512 width={70} height={70} fill="#FFFFFF" className="mr-6" />
+          <Logo_text_only
+            width={"auto"}
+            height={"auto"}
+            fill="#FFFFFF"
+            className="mr-2"
           />
         </div>
       </header>
@@ -58,14 +60,16 @@ const Layout: React.FC = () => {
       {/* Desktop Sidebar */}
       <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:flex md:w-64 md:flex-col">
         <div className="flex flex-col flex-grow pt-5 bg-sky-900 dark:bg-gray-800">
-          <div className="flex items-center justify-center h-16">
+          <div className="flex items-center justify-start h-16 mx-3">
             <h1 className="sr-only">WoodCut Optimizer</h1>
-            <img
-              className="!max-w-56"
-              src={"/logo_white.svg"}
-              alt="Logo"
-              style={{ height: "auto" }}
+
+            <Favicon_512
+              width={80}
+              height={80}
+              fill="#FFFFFF"
+              className="mr-2"
             />
+            <Logo_text_only width={"auto"} height={"auto"} fill="#FFFFFF" />
           </div>
           <div className="flex flex-col flex-grow mt-8">
             <nav className="flex-1 px-2 space-y-1">
